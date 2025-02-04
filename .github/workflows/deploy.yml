@@ -37,6 +37,9 @@ jobs:
     - name: Start server
       run: npm start &
 
+    - name: Wait for server to start
+      run: sleep 10
+
     - name: Keep server running and verify periodically
       run: |
         for i in {1..6}; do
