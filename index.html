@@ -34,7 +34,7 @@
         }
 
         // Tarkista palvelimen tila vain kerran sivun latauksen yhteydessä
-        checkServerStatus();
+        window.addEventListener('load', checkServerStatus);
     </script>
 </body>
 </html>
