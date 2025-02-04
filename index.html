@@ -33,8 +33,10 @@
             }
         }
 
-        // Tarkista palvelimen tila vain kerran sivun latauksen yhteydessä
-        window.addEventListener('load', checkServerStatus);
+        window.addEventListener('load', function() {
+            document.getElementById('server-status').textContent = 'Checking...';
+            checkServerStatus();
+        });
     </script>
 </body>
 </html>
