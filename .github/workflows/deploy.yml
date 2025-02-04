@@ -40,8 +40,9 @@ jobs:
     - name: Wait for server to start
       run: sleep 10
 
-    - name: Keep server running and verify periodically
+    - name: Verify server status periodically
       run: |
+        echo "Starting status verification loop..."
         for i in {1..6}; do
           echo "Check $i/6 - Verifying server status..."
           response=$(curl -v -s -w "%{http_code}" -o response.txt http://localhost:3000/status) || true
