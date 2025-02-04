@@ -38,9 +38,16 @@ jobs:
       run: |
         for i in {1..6}; do
           echo "Check $i/6 - Verifying server status..."
-          response=$(curl -s -w "%{http_code}" -o response.txt http://localhost:3000/proxy) && echo "Status OK" || { echo "Server is down"; break; }
+          response=$(curl -s -w "%{http_code}" -o response.txt http://localhost:3000/status) || true
+          status=$(cat response.txt | jq -r '.status' || echo "unknown")
           echo "HTTP Status Code: $response"
           echo "Response Body: $(cat response.txt)"
+          if [ "$status" != "OK" ]; then
+            echo "Server status not OK. Attempt $i failed."
+          else
+            echo "Status OK"
+            break
+          fi
           sleep 10
         done
       continue-on-error: true
