@@ -15,25 +15,25 @@
     <div id="proxy-content"></div>
 
     <script>
-        function checkServerStatus() {
-            fetch('https://petehuu.github.io/fetch/index.html', {
-                method: 'GET',
-                mode: 'cors',
-                credentials: 'include'
-            })
-            .then(response => response.text())
-            .then(data => {
+        async function checkServerStatus() {
+            try {
+                const response = await fetch('https://petehuu.github.io/fetch/index.html', {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'include'
+                });
+                const data = await response.text();
                 document.getElementById('server-status').textContent = 'Status OK';
                 document.getElementById('server-status').className = 'status-ok';
                 document.getElementById('proxy-content').innerHTML = data;
-            })
-            .catch(error => {
+            } catch (error) {
                 document.getElementById('server-status').textContent = 'Server is down';
                 document.getElementById('server-status').className = 'status-down';
                 console.error('Fetch error:', error);
-            });
+            }
         }
 
+        // Tarkista palvelimen tila vain kerran sivun latauksen yhteydessä
         checkServerStatus();
     </script>
 </body>
