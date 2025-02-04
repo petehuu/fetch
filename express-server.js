@@ -1,14 +1,13 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const http = require('http');
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// Tarjotaan staattiset tiedostot public-kansiosta
-app.use(express.static(path.join(__dirname, 'public')));
+// Tarjotaan staattiset tiedostot root-hakemistosta
+app.use(express.static(path.join(__dirname, '/')));
 
 // CURS-varmistus middleware
 app.use((req, res, next) => {
