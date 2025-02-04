@@ -38,7 +38,10 @@ jobs:
       run: |
         for i in {1..6}; do
           echo "Checking server status: Attempt $i"
-          status=$(curl -s http://localhost:3000/status | jq -r '.status')
+          response=$(curl -s -w "%{http_code}" -o response.txt http://localhost:3000/status)
+          status=$(cat response.txt | jq -r '.status')
+          echo "HTTP Status Code: $response"
+          echo "Response Body: $(cat response.txt)"
           if [ "$status" != "OK" ]; then
             echo "Server status not OK. Attempt $i failed."
             sleep 10
