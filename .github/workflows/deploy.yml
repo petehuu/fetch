@@ -57,10 +57,10 @@ jobs:
           status=$(cat response.txt | jq -r '.status' || echo "unknown")
           echo "HTTP Status Code: $response"
           echo "Response Body: $(cat response.txt)"
-          if [ "$status" != "OK" ]; then
-            echo "Server status not OK. Attempt $i failed."
+          if [ "$status" == "OK" ]; then
+            echo "Server status OK. Remaining in loop."
           else
-            echo "Status OK"
+            echo "Server status not OK. Attempt $i failed."
             break
           fi
           echo "Waiting for 10 seconds before next attempt..."
