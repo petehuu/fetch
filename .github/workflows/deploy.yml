@@ -33,7 +33,7 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-        publish_dir: ./  # Julkaisukansio on root
+        publish_dir: ./
 
     - name: Start server
       run: |
@@ -60,7 +60,7 @@ jobs:
           echo "Response Body: $(cat response.txt)"
           if [ "$status" == "OK" ]; then
             echo "Server status OK. Remaining in loop."
-          else {
+          else
             echo "Server status not OK. Attempt $i failed."
             break
           fi
