@@ -1,38 +1,36 @@
 const express = require('express');
-const fetch = require('node-fetch');
-const cors = require('cors');
+const fs = require('fs');
 const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(cors({
-    origin: '*',
-    credentials: true,
-}));
+app.use(express.json());
 
-// Reitti hakea tiedoston GitHub Pages -sivulta
-app.get('/fetch-page', async (req, res) => {
-    try {
-        const response = await fetch('https://petehuu.github.io/fetch/index.html');
-        const data = await response.text();
-        res.send(data);
-    } catch (error) {
-        console.error('Error fetching page:', error);
-        res.status(500).send('Error fetching page');
-    }
+// Reitti lukemaan status.json
+app.get('/status', (req, res) => {
+    fs.readFile(path.join(__dirname, 'status.json'), 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading file:', err);
+            res.status(500).send('Error reading file');
+        } else {
+            res.json(JSON.parse(data));
+        }
+    });
 });
 
-// Tarjoa staattiset tiedostot
-app.use(express.static(path.join(__dirname)));
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+// Reitti päivittämään status.json
+app.post('/update-status', (req, res) => {
+    const newStatus = req.body;
+    fs.writeFile(path.join(__dirname, 'status.json'), JSON.stringify(newStatus, null, 2), (err) => {
+        if (err) {
+            console.error('Error writing file:', err);
+            res.status(500).send('Error writing file');
+        } else {
+            res.send('File updated successfully');
+        }
+    });
 });
 
-const server = app.listen(port, '0.0.0.0', () => {
-    console.log(`Server running at http://0.0.0.0:${port}`);
-});
-
-server.on('error', (err) => {
-    console.error('Server error:', err);
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });
