@@ -4,7 +4,8 @@
   "description": "A project to fetch a page from GitHub Pages.",
   "main": "express-server.js",
   "scripts": {
-    "start": "node express-server.js"
+    "start": "node express-server.js",
+    "build": "mkdir -p build && cp -r * build/ && rm -rf build/node_modules"
   },
   "dependencies": {
     "cors": "^2.8.5",
