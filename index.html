@@ -32,6 +32,23 @@
             }
         }
 
+        async function updateServerStatus(newStatus) {
+            try {
+                const response = await fetch('http://localhost:3000/update-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                if (response.ok) {
+                    console.log('Status updated successfully');
+                } else {
+                    console.error('Failed to update status');
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        }
+
         window.onload = checkServerStatus;
     </script>
 </body>
