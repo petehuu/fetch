@@ -8,9 +8,7 @@
     "build": "rm -rf build && mkdir build && rsync -av --progress --exclude build --exclude node_modules ./ ./build"
   },
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "node-fetch": "^2.6.1"
+    "express": "^4.17.1"
   },
   "repository": {
     "type": "git",
