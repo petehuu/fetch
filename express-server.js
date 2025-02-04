@@ -9,10 +9,6 @@ app.use(express.json());
 // Tarjotaan staattiset tiedostot public-kansiosta
 app.use(express.static(path.join(__dirname, 'public')));
 
-let checkAttempts = 0;
-const maxAttempts = 6;
-const interval = 10000; // 10 sekuntia
-
 // CURS-varmistus middleware
 app.use((req, res, next) => {
     const allowedOrigins = ['http://localhost:3000', 'https://petehuu.github.io'];
@@ -50,52 +46,6 @@ app.post('/update-status', (req, res) => {
         }
     });
 });
-
-const checkServerStatus = () => {
-    const http = require('http');
-
-    const options = {
-        host: 'localhost',
-        port: port,
-        path: '/status',
-        method: 'GET'
-    };
-
-    const req = http.request(options, (res) => {
-        let data = '';
-        res.on('data', (chunk) => {
-            data += chunk;
-        });
-
-        res.on('end', () => {
-            const status = JSON.parse(data).status;
-            console.log(`Status check ${checkAttempts + 1}: ${status}`);
-            if (status !== 'OK') {
-                checkAttempts++;
-                if (checkAttempts >= maxAttempts) {
-                    console.log(`Max attempts reached. Shutting down server.`);
-                    process.exit(1);
-                }
-            } else {
-                checkAttempts = 0; // Reset attempts if status is OK
-            }
-        });
-    });
-
-    req.on('error', (e) => {
-        console.error(`Request error: ${e.message}`);
-        checkAttempts++;
-        if (checkAttempts >= maxAttempts) {
-            console.log(`Max attempts reached. Shutting down server.`);
-            process.exit(1);
-        }
-    });
-
-    req.end();
-};
-
-// Käynnistetään varmistus
-setInterval(checkServerStatus, interval);
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
