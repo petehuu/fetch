@@ -33,3 +33,21 @@ jobs:
       with:
         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         publish_dir: ./build
+
+    - name: Check server status
+      run: |
+        for i in {1..6}; do
+          echo "Checking server status: Attempt $i"
+          status=$(curl -s http://localhost:3000/status | jq -r '.status')
+          if [ "$status" != "OK" ]; then
+            echo "Server status not OK. Attempt $i failed."
+            sleep 10
+          else
+            echo "Server status OK. Proceeding."
+            break
+          fi
+          if [ $i -eq 6 ]; then
+            echo "Max attempts reached. Shutting down server."
+            exit 1
+          fi
+        done
