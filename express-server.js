@@ -6,6 +6,23 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
+let checkAttempts = 0;
+const maxAttempts = 6;
+const interval = 10000; // 10 sekuntia
+
+// CURS-varmistus middleware
+app.use((req, res, next) => {
+    const allowedOrigins = ['http://localhost:3000', 'https://petehuu.github.io'];
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    next();
+});
+
 // Reitti lukemaan status.json
 app.get('/status', (req, res) => {
     fs.readFile(path.join(__dirname, 'status.json'), 'utf8', (err, data) => {
@@ -30,6 +47,51 @@ app.post('/update-status', (req, res) => {
         }
     });
 });
+
+const checkServerStatus = () => {
+    const http = require('http');
+
+    const options = {
+        host: 'localhost',
+        port: port,
+        path: '/status',
+        method: 'GET'
+    };
+
+    const req = http.request(options, (res) => {
+        let data = '';
+        res.on('data', (chunk) => {
+            data += chunk;
+        });
+
+        res.on('end', () => {
+            const status = JSON.parse(data).status;
+            if (status !== 'OK') {
+                checkAttempts++;
+                if (checkAttempts >= maxAttempts) {
+                    console.log(`Max attempts reached. Shutting down server.`);
+                    process.exit(1);
+                }
+            } else {
+                checkAttempts = 0; // Reset attempts if status is OK
+            }
+        });
+    });
+
+    req.on('error', (e) => {
+        console.error(`Request error: ${e.message}`);
+        checkAttempts++;
+        if (checkAttempts >= maxAttempts) {
+            console.log(`Max attempts reached. Shutting down server.`);
+            process.exit(1);
+        }
+    });
+
+    req.end();
+};
+
+// Käynnistetään varmistus
+setInterval(checkServerStatus, interval);
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
