@@ -1,52 +1,69 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const app = express();
-const port = process.env.PORT || 3000;
+name: Build and Deploy
 
-app.use(express.json());
+on:
+  push:
+    branches:
+      - main
 
-// Tarjotaan staattiset tiedostot public-kansiosta
-app.use(express.static(path.join(__dirname, 'public')));
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-// CURS-varmistus middleware
-app.use((req, res, next) => {
-    const allowedOrigins = ['http://localhost:3000', 'https://petehuu.github.io'];
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    next();
-});
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-// Reitti lukemaan status.json
-app.get('/status', (req, res) => {
-    fs.readFile(path.join(__dirname, 'status.json'), 'utf8', (err, data) => {
-        if (err) {
-            console.error('Error reading file:', err);
-            res.status(500).send('Error reading file');
-        } else {
-            res.json(JSON.parse(data));
-        }
-    });
-});
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
 
-// Reitti päivittämään status.json
-app.post('/update-status', (req, res) => {
-    const newStatus = req.body;
-    fs.writeFile(path.join(__dirname, 'status.json'), JSON.stringify(newStatus, null, 2), (err) => {
-        if (err) {
-            console.error('Error writing file:', err);
-            res.status(500).send('Error writing file');
-        } else {
-            res.send('File updated successfully');
-        }
-    });
-});
+    - name: Install dependencies
+      run: npm install
 
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
+    - name: Run tests
+      run: npm test
+      continue-on-error: true
+
+    - name: Build project
+      run: npm run build
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+        publish_dir: ./build
+
+    - name: Start server
+      run: |
+        echo "Starting server..."
+        npm start &
+        echo "Server started."
+
+    - name: Wait for server to start
+      run: |
+        echo "Waiting for server to start..."
+        sleep 5
+
+    - name: Verify server status periodically
+      run: |
+        echo "Starting status verification loop..."
+        for i in {1..6}; do
+          echo "Check $i/6 - Verifying server status..."
+          echo "Sending curl request..."
+          response=$(curl -v -s -w "%{http_code}" -o response.txt http://localhost:3000/status) || true
+          echo "Curl request completed."
+          echo "Reading response..."
+          status=$(cat response.txt | jq -r '.status' || echo "unknown")
+          echo "HTTP Status Code: $response"
+          echo "Response Body: $(cat response.txt)"
+          if [ "$status" == "OK" ]; then
+            echo "Server status OK. Remaining in loop."
+          else
+            echo "Server status not OK. Attempt $i failed."
+            break
+          fi
+          echo "Waiting for 10 seconds before next attempt..."
+          sleep 10
+        done
+      continue-on-error: true
