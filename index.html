@@ -33,8 +33,13 @@
             }
         }
 
-        // Tarkista palvelimen tila vain kerran sivun latauksen yhteydessä
         window.onload = function() {
+            // Poistetaan ylimääräiset viestit
+            document.querySelectorAll('#server-status').forEach((el, index) => {
+                if (index > 0) el.remove();
+            });
+
+            // Tarkistetaan palvelimen tila
             checkServerStatus();
         };
     </script>
