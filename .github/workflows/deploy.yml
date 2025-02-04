@@ -51,6 +51,7 @@ jobs:
             echo "Status OK"
             break
           fi
+          echo "Waiting for 10 seconds before next attempt..."
           sleep 10
         done
       continue-on-error: true
