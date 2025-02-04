@@ -5,7 +5,7 @@
   "main": "express-server.js",
   "scripts": {
     "start": "node express-server.js",
-    "build": "mkdir -p build && cp -r * build/ && rm -rf build/node_modules"
+    "build": "mkdir -p build && cp -r !(build|node_modules) build/"
   },
   "dependencies": {
     "cors": "^2.8.5",
