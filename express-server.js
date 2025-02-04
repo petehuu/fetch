@@ -6,6 +6,9 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
+// Tarjotaan staattiset tiedostot public-kansiosta
+app.use(express.static(path.join(__dirname, 'public')));
+
 let checkAttempts = 0;
 const maxAttempts = 6;
 const interval = 10000; // 10 sekuntia
@@ -66,6 +69,7 @@ const checkServerStatus = () => {
 
         res.on('end', () => {
             const status = JSON.parse(data).status;
+            console.log(`Status check ${checkAttempts + 1}: ${status}`);
             if (status !== 'OK') {
                 checkAttempts++;
                 if (checkAttempts >= maxAttempts) {
