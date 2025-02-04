@@ -27,8 +27,11 @@ jobs:
     - name: Build project
       run: npm run build
 
+    - name: Start server
+      run: npm start &
+
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./build
