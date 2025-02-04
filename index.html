@@ -17,15 +17,15 @@
     <script>
         async function checkServerStatus() {
             try {
-                const response = await fetch('https://petehuu.github.io/fetch/index.html', {
-                    method: 'GET',
-                    mode: 'cors',
-                    credentials: 'include'
-                });
-                const data = await response.text();
-                document.getElementById('server-status').textContent = 'Status OK';
-                document.getElementById('server-status').className = 'status-ok';
-                document.getElementById('proxy-content').innerHTML = data;
+                const response = await fetch('http://localhost:3000/status');
+                const data = await response.json();
+                if (data.status === "OK") {
+                    document.getElementById('server-status').textContent = 'Status OK';
+                    document.getElementById('server-status').className = 'status-ok';
+                } else {
+                    document.getElementById('server-status').textContent = 'Server is down';
+                    document.getElementById('server-status').className = 'status-down';
+                }
             } catch (error) {
                 document.getElementById('server-status').textContent = 'Server is down';
                 document.getElementById('server-status').className = 'status-down';
@@ -33,15 +33,7 @@
             }
         }
 
-        window.onload = function() {
-            // Poistetaan ylimääräiset viestit
-            document.querySelectorAll('#server-status').forEach((el, index) => {
-                if (index > 0) el.remove();
-            });
-
-            // Tarkistetaan palvelimen tila
-            checkServerStatus();
-        };
+        window.onload = checkServerStatus;
     </script>
 </body>
 </html>
