@@ -19,7 +19,7 @@
     <script>
         async function checkServerStatus() {
             try {
-                const furl = 'http://localhost:3000/status';  // URL to your server status endpoint
+                const furl = 'http://localhost:4000/api/status';  // Proxy URL
                 const response = await fetch(furl, {
                     method: 'GET',
                     headers: {
