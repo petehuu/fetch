@@ -21,8 +21,9 @@
             try {
                 const furl = 'http://localhost:3000/status';  // URL to your server status endpoint
                 const response = await fetch(furl, {
+                    method: 'GET',
                     headers: {
-                        'Accept': 'application/json'
+                        'Content-Type': 'application/json'
                     }
                 });
                 const text = await response.text();
