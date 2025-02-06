@@ -22,9 +22,9 @@
                 //const furl = '/status';
                 //const furl = 'http://localhost:3000/status';
                 //const furl = 'http://127.0.0.1:3000/status';
-                //const furl = 'http://www.google.com';
-                //const furl = 'https://avoin-karttakuva.maanmittauslaitos.fi/ortokuvat-ja-korkeusmallit/wcs/v2?api-key=7cd2ddae-9f2e-481c-99d0-404e7bc7a0b2&service=WCS&version=2.0.1&request=GetCoverage&CoverageID=korkeusmalli_2m&SUBSET=E(355144,355148)&SUBSET=N(6652224,6652228)&format=text/plain';
-                const furl = 'https://hkp.maanmittauslaitos.fi/hkp/action?action_route=Coordinates&lat=60.193553365392276&lon=25.177552700042728&srs=EPSG:4326&targetSRS=EPSG:3067';
+                const furl = 'https://www.google.com';
+                //const furl = 'https://avoin-karttakuva.maanmittauslaitos.fi/ortokuvat-ja-korkeusmallit/wcs/v2?api-key=7cd2ddae-9f2e-481c-99d0-404e7bc7a0b2&service=WCS&version=2.0.1&request=GetCoverage&CoverageID=korkeusmalli_2m&SUBSET=E(355144,355148)&SUBSET=N(6652224,6652228)&format=text/plain';  // ok
+                //const furl = 'https://hkp.maanmittauslaitos.fi/hkp/action?action_route=Coordinates&lat=60.193553365392276&lon=25.177552700042728&srs=EPSG:4326&targetSRS=EPSG:3067';  // cors error
                 const response = await fetch(furl);
                 const text = await response.text();
                 console.log("Raw response:", text);
