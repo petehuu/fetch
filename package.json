@@ -1,20 +1,23 @@
-const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
-const cors = require('cors');
-const app = express();
-const port = process.env.PORT || 4000;
-
-app.use(cors());  // Use the cors middleware
-
-// Proxy endpoint to forward requests to your Express server
-app.use('/api', createProxyMiddleware({
-    target: 'http://localhost:3000',  // Your Express server
-    changeOrigin: true,
-    pathRewrite: {
-        '^/api': ''  // Remove "/api" from the proxied request path
-    }
-}));
-
-app.listen(port, () => {
-    console.log(`Proxy server running at http://localhost:${port}`);
-});
+{
+  "name": "fetch",
+  "version": "1.0.0",
+  "description": "A project to fetch a page from GitHub Pages.",
+  "main": "express-server.js",
+  "scripts": {
+    "start": "node express-server.js",
+    "proxy": "node proxy-server.js",
+    "dev": "concurrently \"npm run start\" \"npm run proxy\""
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "cors": "^2.8.5",
+    "http-proxy-middleware": "^2.0.6",
+    "concurrently": "^7.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/petehuu/fetch.git"
+  },
+  "author": "petehuu",
+  "license": "MIT"
+}
