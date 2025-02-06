@@ -31,10 +31,12 @@
                 } else {
                     document.getElementById('server-status').textContent = 'Server is down';
                     document.getElementById('server-status').className = 'status-down';
+                    document.getElementById('result').innerText = ""; // Clear response text
                 }
             } catch (error) {
                 document.getElementById('server-status').textContent = 'Server is down';
                 document.getElementById('server-status').className = 'status-down';
+                document.getElementById('result').innerText = ""; // Clear response text
                 console.error('Fetch error:', error);
             }
         }
