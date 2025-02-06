@@ -1,12 +1,18 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const cors = require('cors');  // Import the cors package
+const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(cors());  // Use the cors middleware
+
+// Configure CORS with specific origins
+const corsOptions = {
+    origin: 'http://localhost:3000',  // Update this with the correct origin if needed
+    optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 
 // Tarjotaan staattiset tiedostot root-hakemistosta
 app.use(express.static(path.join(__dirname, '/')));
