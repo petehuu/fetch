@@ -7,9 +7,9 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// Configure CORS with specific origins
+// Configure CORS to allow all origins
 const corsOptions = {
-    origin: 'http://localhost:3000',  // Update this with the correct origin if needed
+    origin: '*',  // Allow all origins for testing purposes
     optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
