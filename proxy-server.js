@@ -23,6 +23,14 @@ app.use('/api', createProxyMiddleware({
     changeOrigin: true,
     pathRewrite: {
         '^/api': ''  // Remove "/api" from the proxied request path
+    },
+    onProxyReq: (proxyReq, req, res) => {
+        // Log the proxy request
+        console.log('Proxy request:', req.method, req.url);
+    },
+    onProxyRes: (proxyRes, req, res) => {
+        // Log the proxy response
+        console.log('Proxy response:', proxyRes.statusCode);
     }
 }));
 
