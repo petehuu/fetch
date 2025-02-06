@@ -20,7 +20,11 @@
         async function checkServerStatus() {
             try {
                 const furl = 'http://localhost:3000/status';  // URL to your server status endpoint
-                const response = await fetch(furl);
+                const response = await fetch(furl, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
                 const text = await response.text();
                 console.log("Raw response:", text);
                 document.getElementById('raw_result').innerText = text; // Display the raw response text
