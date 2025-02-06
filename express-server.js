@@ -6,19 +6,14 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-
-// Configure CORS to allow all origins
-const corsOptions = {
-    origin: '*',  // Allow all origins for testing purposes
-    optionsSuccessStatus: 200
-};
-app.use(cors(corsOptions));
+app.use(cors());  // Use the cors middleware
 
 // Tarjotaan staattiset tiedostot root-hakemistosta
 app.use(express.static(path.join(__dirname, '/')));
 
 // Reitti lukemaan status.json
 app.get('/status', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');  // Set CORS headers manually
     fs.readFile(path.join(__dirname, 'status.json'), 'utf8', (err, data) => {
         if (err) {
             console.error('Error reading file:', err);
@@ -31,6 +26,7 @@ app.get('/status', (req, res) => {
 
 // Reitti päivittämään status.json
 app.post('/update-status', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');  // Set CORS headers manually
     const newStatus = req.body;
     fs.writeFile(path.join(__dirname, 'status.json'), JSON.stringify(newStatus, null, 2), (err) => {
         if (err) {
