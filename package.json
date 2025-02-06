@@ -14,6 +14,7 @@
     "type": "git",
     "url": "git+https://github.com/petehuu/fetch.git"
   },
+  "proxy": "http://localhost:3000",
   "author": "petehuu",
   "license": "MIT"
 }
