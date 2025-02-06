@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Status</title>
+    <style>
+        .status-ok { color: green; }
+        .status-down { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Server Status</h1>
+    <p id="server-status">Checking...</p>
+    <br>
+    <pre id="result">Loading...</pre>
+    <br>
+    <pre id="raw_result"> </pre>
+    <script>
+        async function checkServerStatus() {
+            try { 
+                //const furl = '/status';
+                //const furl = 'http://localhost:3000/status';
+                //const furl = 'http://127.0.0.1:3000/status';
+                const furl = 'https://www.google.com';
+                //const furl = 'https://avoin-karttakuva.maanmittauslaitos.fi/ortokuvat-ja-korkeusmallit/wcs/v2?api-key=7cd2ddae-9f2e-481c-99d0-404e7bc7a0b2&service=WCS&version=2.0.1&request=GetCoverage&CoverageID=korkeusmalli_2m&SUBSET=E(355144,355148)&SUBSET=N(6652224,6652228)&format=text/plain';  // ok
+                //const furl = 'https://hkp.maanmittauslaitos.fi/hkp/action?action_route=Coordinates&lat=60.193553365392276&lon=25.177552700042728&srs=EPSG:4326&targetSRS=EPSG:3067';  // cors error
+                //const proxy = "";
+        const proxy = "http://localhost:3000/status/";
+        //const proxy = "https://cors-anywhere.herokuapp.com/";
+                //const proxy = "https://proxy.corsfix.com/?";   // must have headers
+                const url = proxy + furl;
+                const response = await fetch(url, { 
+                    //mode: 'no-cors',
+                    headers: {
+                        "Access-Control-Allow-Origin": "*"
+                    }
+                });
+                const text = await response.text();
+                console.log("Raw response:", text);
+                document.getElementById('raw_result').innerText = text; // Display the raw response text
+                const data = text.json();
+                if (data.status === "OK") {
+                    document.getElementById('server-status').textContent = 'Status OK';
+                    document.getElementById('server-status').className = 'status-ok';
+                } else {
+                    document.getElementById('server-status').textContent = 'Server is down';
+                    document.getElementById('server-status').className = 'status-down';
+                    document.getElementById('result').innerText = ""; // Clear response text
+                }
+            } catch (error) {
+                document.getElementById('server-status').textContent = 'Server is down';
+                document.getElementById('server-status').className = 'status-down';
+                document.getElementById('result').innerText = ""; // Clear response text
+                console.error('Fetch error:', error);
+            }
+        }
+
+        async function updateServerStatus(newStatus) {
+            try {
+                const response = await fetch('http://localhost:3000/update-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                if (response.ok) {
+                    console.log('Status updated successfully');
+                } else {
+                    console.error('Failed to update status');
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        }
+
+        window.onload = checkServerStatus;
+    </script>
+</body>
+</html>
