@@ -9,20 +9,6 @@ app.use(express.json());
 // Tarjotaan staattiset tiedostot root-hakemistosta
 app.use(express.static(path.join(__dirname, '/')));
 
-// CURS-varmistus middleware
-app.use((req, res, next) => {
-    const allowedOrigins = ['http://localhost:3000', 'https://petehuu.github.io'];
-    console.log(`req.headers:${req.headers}`);
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    next();
-});
-
 // Reitti lukemaan status.json
 app.get('/status', (req, res) => {
     fs.readFile(path.join(__dirname, 'status.json'), 'utf8', (err, data) => {
