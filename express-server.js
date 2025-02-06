@@ -1,15 +1,17 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const cors = require('cors');
+const cors = require('cors');  // Import the cors package
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors());  // Use the cors middleware
 
+// Tarjotaan staattiset tiedostot root-hakemistosta
 app.use(express.static(path.join(__dirname, '/')));
 
+// Reitti lukemaan status.json
 app.get('/status', (req, res) => {
     fs.readFile(path.join(__dirname, 'status.json'), 'utf8', (err, data) => {
         if (err) {
@@ -21,6 +23,7 @@ app.get('/status', (req, res) => {
     });
 });
 
+// Reitti päivittämään status.json
 app.post('/update-status', (req, res) => {
     const newStatus = req.body;
     fs.writeFile(path.join(__dirname, 'status.json'), JSON.stringify(newStatus, null, 2), (err) => {
@@ -35,6 +38,4 @@ app.post('/update-status', (req, res) => {
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
-    console.log('Current directory:', __dirname);
-    console.log('Status file path:', path.join(__dirname, 'status.json'));
 });
