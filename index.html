@@ -17,9 +17,9 @@
     <script>
         async function checkServerStatus() {
             try {
-                //const furl = 'http://localhost:3000/status';
+                const furl = 'http://localhost:3000/status';
                 //const furl = 'http://127.0.0.1:3000/status';
-                const furl = 'http://www.google.com';
+                //const furl = 'http://www.google.com';
                 const response = await fetch(furl);
                 const text = await response.text();
                 console.log("Raw response:", text);
