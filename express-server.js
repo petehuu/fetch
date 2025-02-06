@@ -12,6 +12,7 @@ app.use(express.static(path.join(__dirname, '/')));
 // CURS-varmistus middleware
 app.use((req, res, next) => {
     const allowedOrigins = ['http://localhost:3000', 'https://petehuu.github.io'];
+    console.log(`req.headers:${req.headers}`);
     const origin = req.headers.origin;
     if (allowedOrigins.includes(origin)) {
         res.setHeader('Access-Control-Allow-Origin', origin);
