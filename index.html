@@ -27,8 +27,8 @@
                 //const furl = 'https://hkp.maanmittauslaitos.fi/hkp/action?action_route=Coordinates&lat=60.193553365392276&lon=25.177552700042728&srs=EPSG:4326&targetSRS=EPSG:3067';  // cors error
                 //const proxy = "";
 		//const proxy = "http://localhost:3000/status/";
-		const proxy = "https://cors-anywhere.herokuapp.com/";
-                //const proxy = "https://proxy.corsfix.com/?";   // must have headers
+		//const proxy = "https://cors-anywhere.herokuapp.com/";
+                const proxy = "https://proxy.corsfix.com/?";   // must have headers
                 const url = proxy + furl;
                 const response = await fetch(url, { 
                     //mode: 'no-cors',
