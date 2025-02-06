@@ -14,6 +14,8 @@
     <p id="server-status">Checking...</p>
     <br>
     <pre id="result">Loading...</pre>
+    <br>
+    <pre id="raw_result"> </pre>
     <script>
         async function checkServerStatus() {
             try {
@@ -26,8 +28,8 @@
                 const response = await fetch(furl);
                 const text = await response.text();
                 console.log("Raw response:", text);
-                document.getElementById('result').innerText = text; // Display the raw response text
-                const data = await response.json();
+                document.getElementById('raw_result').innerText = text; // Display the raw response text
+                const data = text.json();
                 if (data.status === "OK") {
                     document.getElementById('server-status').textContent = 'Status OK';
                     document.getElementById('server-status').className = 'status-ok';
