@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node express-server.js",
     "proxy": "node proxy-server.js",
-    "dev": "concurrently \"npm run start\" \"npm run proxy\""
+    "dev": "concurrently \"npm run start\" \"npm run proxy\"",
+    "build": "echo 'Build script is a placeholder'"
   },
   "dependencies": {
     "express": "^4.17.1",
