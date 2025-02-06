@@ -44,7 +44,7 @@ jobs:
     - name: Wait for server to start
       run: |
         echo "Waiting for server to start..."
-        sleep 2
+        sleep 5  # Increase wait time to ensure server starts
 
     - name: Verify server status periodically
       run: |
