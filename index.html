@@ -16,7 +16,9 @@
     <script>
         async function checkServerStatus() {
             try {
-                const response = await fetch('http://localhost:3000/status');
+                //const furl = 'http://localhost:3000/status';
+                const furl = 'http://127.0.0.1:3000/status';
+                const response = await fetch(furl);
                 const data = await response.json();
                 if (data.status === "OK") {
                     document.getElementById('server-status').textContent = 'Status OK';
