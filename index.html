@@ -9,11 +9,11 @@
         .status-down { color: red; }
     </style>
     <!-- Sisällytä SockJS-kirjasto -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
     <script>
         function checkServerStatus() {
             try {
-                const sock = new SockJS('http://localhost/websocket');
+                const sock = new SockJS('http://localhost/websocket'); // Käytetään HTTP:ta
 
                 sock.onopen = () => {
                     console.log('SockJS-yhteys avattu');
