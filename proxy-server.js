@@ -7,6 +7,12 @@ const port = process.env.PORT || 4000;
 
 app.use(cors());  // Käytä cors-middlewarea
 
+// Lokitiedot pyynnöistä
+app.use((req, res, next) => {
+    console.log(`Pyynnön URL: ${req.url}, Metodi: ${req.method}`);
+    next();
+});
+
 // Palvele `server-status.js` tiedostoa käyttäen `/src` polkua
 app.use('/src', express.static(path.join(__dirname, '/')));
 
