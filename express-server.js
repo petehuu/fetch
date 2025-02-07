@@ -10,6 +10,7 @@ app.use(cors());  // Käytä cors-middlewarea
 app.use(express.static(path.join(__dirname, '/')));
 
 app.get('/status', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');  // Salli pyynnöt mistä tahansa alkuperästä
     fs.readFile(path.join(__dirname, 'status.json'), 'utf8', (err, data) => {
         if (err) {
             console.error('Virhe luettaessa tiedostoa:', err);
