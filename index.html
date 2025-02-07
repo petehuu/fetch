@@ -13,7 +13,7 @@
     <script>
         function checkServerStatus() {
             try {
-                const sock = new SockJS('https://localhost:443/websocket'); // Käytetään HTTPS:ää ja porttia 443
+                const sock = new SockJS('https://127.0.0.1:443/websocket'); // Käytetään IP-osoitetta ja porttia 443
 
                 sock.onopen = () => {
                     console.log('SockJS-yhteys avattu');
