@@ -1,70 +1,65 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const cors = require('cors');
-const https = require('https');
-const SockJS = require('sockjs');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Status</title>
+    <style>
+        .status-ok { color: green; }
+        .status-down { color: red; }
+    </style>
+    <!-- Sisällytä SockJS-kirjasto HTTPS-versiona -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script>
+        function checkServerStatus() {
+            try {
+                const sock = new SockJS('https://127.0.0.1:443/websocket'); // Käytetään IP-osoitetta ja porttia 443
 
-const app = express();
-const port = 443; // Käytetään porttia 443 HTTPS:lle
+                sock.onopen = () => {
+                    console.log('SockJS-yhteys avattu');
+                    sock.send('getStatus');
+                };
 
-// Käytä cors-middlewarea
-app.use(cors());
+                sock.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    console.log("Vastaanotettu:", data);
+                    document.getElementById('raw_result').innerText = JSON.stringify(data, null, 2);
+                    if (data.status === "OK") {
+                        document.getElementById('server-status').textContent = 'Status OK';
+                        document.getElementById('server-status').className = 'status-ok';
+                    } else {
+                        document.getElementById('server-status').textContent = 'Server is down';
+                        document.getElementById('server-status').className = 'status-down';
+                    }
+                };
 
-// Aseta staattiset tiedostot
-app.use(express.static(path.join(__dirname, '/')));
+                sock.onerror = (error) => {
+                    console.error('SockJS-virhe:', error);
+                    document.getElementById('server-status').textContent = 'Server is down';
+                    document.getElementById('server-status').className = 'status-down';
+                };
 
-// SockJS-palvelin
-const sockjs = SockJS.createServer();
-sockjs.on('connection', (conn) => {
-    console.log('SockJS-yhteys muodostettu');
-    conn.write(JSON.stringify({ message: 'Yhteys muodostettu' })); // Lähetetään vahvistus JSON-muodossa
-
-    conn.on('data', (message) => {
-        console.log('Vastaanotettu:', message);
-        // Käsittele SockJS-viesti ja vastaa
-        if (message === 'getStatus') {
-            fs.readFile(path.join(__dirname, 'status.json'), 'utf8', (err, data) => {
-                if (err) {
-                    console.error('Virhe luettaessa tiedostoa:', err);
-                    conn.write(JSON.stringify({ status: 'error', message: 'Virhe luettaessa tiedostoa' }));
-                } else {
-                    conn.write(data);
-                }
-            });
+                sock.onclose = (event) => {
+                    console.log('SockJS-yhteys suljettu:', event);
+                    document.getElementById('server-status').textContent = 'Server is down';
+                    document.getElementById('server-status').className = 'status-down';
+                };
+            } catch (error) {
+                console.error('SockJS-yhteyden muodostusvirhe:', error);
+                document.getElementById('server-status').textContent = 'Server is down';
+                document.getElementById('server-status').className = 'status-down';
+            }
         }
-    });
 
-    conn.on('error', (error) => {
-        console.error('SockJS-virhe:', error);
-    });
-
-    conn.on('close', () => {
-        console.log('SockJS-yhteys suljettu');
-    });
-});
-
-// Lataa SSL-sertifikaatti ja avain
-const privateKey = fs.readFileSync('server.key', 'utf8');
-const certificate = fs.readFileSync('server.cert', 'utf8');
-const credentials = { key: privateKey, cert: certificate };
-
-const server = https.createServer(credentials, app);
-sockjs.installHandlers(server, { prefix: '/websocket' });
-
-// Lisää `/status` reitti
-app.get('/status', (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    fs.readFile(path.join(__dirname, 'status.json'), 'utf8', (err, data) => {
-        if (err) {
-            console.error('Virhe luettaessa tiedostoa:', err);
-            res.status(500).send('Virhe luettaessa tiedostoa');
-        } else {
-            res.json(JSON.parse(data));
-        }
-    });
-});
-
-server.listen(port, () => {
-    console.log(`Serveri käynnissä osoitteessa https://localhost:${port}`);
-});
+        window.onload = checkServerStatus;
+    </script>
+</head>
+<body>
+    <h1>Server Status</h1>
+    <p id="server-status">Checking...</p>
+    <br>
+    <pre id="result">Loading...</pre>
+    <br>
+    <pre id="raw_result"> </pre>
+</body>
+</html>
