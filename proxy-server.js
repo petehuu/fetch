@@ -7,8 +7,8 @@ const port = process.env.PORT || 4000;
 
 app.use(cors());  // Käytä cors-middlewarea
 
-// Palvele `server-status.js` tiedostoa
-app.use('/server-status.js', express.static(path.join(__dirname, 'server-status.js')));
+// Palvele `server-status.js` tiedostoa käyttäen `/src` polkua
+app.use('/src', express.static(path.join(__dirname, '/')));
 
 // Manuaalinen CORS-otsikoiden asettaminen (varmuuden vuoksi)
 app.use((req, res, next) => {
