@@ -8,18 +8,19 @@
         .status-ok { color: green; }
         .status-down { color: red; }
     </style>
-    <!-- Sisällytä ulkoinen JavaScript-tiedosto käyttämällä WebSocket-yhteyttä -->
+    <!-- Sisällytä SockJS-kirjasto -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
     <script>
         function checkServerStatus() {
             try {
-                const ws = new WebSocket('ws://localhost:80');
+                const sock = new SockJS('http://localhost/websocket');
 
-                ws.onopen = () => {
-                    console.log('WebSocket-yhteys avattu');
-                    ws.send('getStatus');
+                sock.onopen = () => {
+                    console.log('SockJS-yhteys avattu');
+                    sock.send('getStatus');
                 };
 
-                ws.onmessage = (event) => {
+                sock.onmessage = (event) => {
                     const data = JSON.parse(event.data);
                     console.log("Vastaanotettu:", data);
                     document.getElementById('raw_result').innerText = JSON.stringify(data, null, 2);
@@ -32,19 +33,19 @@
                     }
                 };
 
-                ws.onerror = (error) => {
-                    console.error('WebSocket-virhe:', error);
+                sock.onerror = (error) => {
+                    console.error('SockJS-virhe:', error);
                     document.getElementById('server-status').textContent = 'Server is down';
                     document.getElementById('server-status').className = 'status-down';
                 };
 
-                ws.onclose = (event) => {
-                    console.log('WebSocket-yhteys suljettu:', event);
+                sock.onclose = (event) => {
+                    console.log('SockJS-yhteys suljettu:', event);
                     document.getElementById('server-status').textContent = 'Server is down';
                     document.getElementById('server-status').className = 'status-down';
                 };
             } catch (error) {
-                console.error('WebSocket-yhteyden muodostusvirhe:', error);
+                console.error('SockJS-yhteyden muodostusvirhe:', error);
                 document.getElementById('server-status').textContent = 'Server is down';
                 document.getElementById('server-status').className = 'status-down';
             }
