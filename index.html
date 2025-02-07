@@ -8,8 +8,38 @@
         .status-ok { color: green; }
         .status-down { color: red; }
     </style>
-    <!-- Sisällytä ulkoinen JavaScript-tiedosto käyttämällä localhost:4000/src -->
-    <script src="http://localhost:4000/src/server-status.js"></script>
+    <!-- Sisällytä ulkoinen JavaScript-tiedosto käyttämällä WebSocket-yhteyttä -->
+    <script>
+        function checkServerStatus() {
+            const ws = new WebSocket('ws://localhost:3000');
+            
+            ws.onopen = () => {
+                console.log('WebSocket-yhteys avattu');
+                ws.send('getStatus');
+            };
+            
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                console.log("Vastaanotettu:", data);
+                document.getElementById('raw_result').innerText = JSON.stringify(data, null, 2);
+                if (data.status === "OK") {
+                    document.getElementById('server-status').textContent = 'Status OK';
+                    document.getElementById('server-status').className = 'status-ok';
+                } else {
+                    document.getElementById('server-status').textContent = 'Server is down';
+                    document.getElementById('server-status').className = 'status-down';
+                }
+            };
+            
+            ws.onerror = (error) => {
+                console.error('WebSocket-virhe:', error);
+                document.getElementById('server-status').textContent = 'Server is down';
+                document.getElementById('server-status').className = 'status-down';
+            };
+        }
+
+        window.onload = checkServerStatus;
+    </script>
 </head>
 <body>
     <h1>Server Status</h1>
