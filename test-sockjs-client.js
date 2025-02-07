@@ -1,8 +1,6 @@
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // Ohitetaan TLS-sertifikaatin tarkistus (vain kehityskäytössä)
-
 const SockJS = require('sockjs-client');
 
-const sock = new SockJS('https://localhost/websocket'); // Käytetään HTTPS:ää
+const sock = new SockJS('http://localhost:3000/websocket'); // Käytetään porttia 3000
 
 sock.onopen = function() {
     console.log('SockJS-yhteys avattu');
