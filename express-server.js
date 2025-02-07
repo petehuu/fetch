@@ -20,6 +20,7 @@ const wss = new WebSocket.Server({ server });
 
 wss.on('connection', (ws) => {
     console.log('WebSocket-yhteys muodostettu');
+    ws.send('Yhteys muodostettu'); // Lähetetään vahvistus yhteydestä
 
     ws.on('message', (message) => {
         console.log('Vastaanotettu:', message);
@@ -38,6 +39,10 @@ wss.on('connection', (ws) => {
 
     ws.on('error', (error) => {
         console.error('WebSocket-virhe:', error);
+    });
+
+    ws.on('close', (code, reason) => {
+        console.log(`WebSocket-yhteys suljettu. Koodi: ${code}, Syy: ${reason}`);
     });
 });
 
