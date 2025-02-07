@@ -4,8 +4,7 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 4000;
 
-// Käytä cors-middlewarea
-app.use(cors());
+app.use(cors());  // Käytä cors-middlewarea
 
 // Manuaalinen CORS-otsikoiden asettaminen
 app.use((req, res, next) => {
