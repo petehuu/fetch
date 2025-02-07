@@ -38,7 +38,7 @@ jobs:
     - name: Start server
       run: |
         echo "Starting server..."
-        nohup npm start &
+        sudo nohup npm start &
         echo "Server started."
 
     - name: Wait for server to start
@@ -47,7 +47,7 @@ jobs:
         sleep 10  # Increase wait time to ensure server starts
 
     - name: Run WebSocket client test
-      run: node test-websocket-client.js
+      run: sudo node test-websocket-client.js
 
     - name: Verify server status periodically
       run: |
@@ -55,7 +55,7 @@ jobs:
         for i in {1..6}; do
           echo "Check $i/6 - Verifying server status..."
           echo "Sending curl request..."
-          response=$(curl -v -s -w "%{http_code}" -o response.txt http://localhost:3000/status) || true
+          response=$(curl -v -s -w "%{http_code}" -o response.txt http://localhost/status) || true
           echo "Curl request completed."
           echo "Reading response..."
           status=$(cat response.txt | jq -r '.status' || echo "unknown")
