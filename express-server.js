@@ -6,7 +6,7 @@ const http = require('http');
 const SockJS = require('sockjs');
 
 const app = express();
-const port = 80; // Käytetään porttia 80
+const port = 80; // Käytetään porttia 80 HTTP:lle
 
 // Käytä cors-middlewarea
 app.use(cors());
