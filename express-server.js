@@ -18,7 +18,7 @@ app.use(express.static(path.join(__dirname, '/')));
 const sockjs = SockJS.createServer();
 sockjs.on('connection', (conn) => {
     console.log('SockJS-yhteys muodostettu');
-    conn.write('Yhteys muodostettu'); // Lähetetään vahvistus yhteydestä
+    conn.write(JSON.stringify({ message: 'Yhteys muodostettu' })); // Lähetetään vahvistus JSON-muodossa
 
     conn.on('data', (message) => {
         console.log('Vastaanotettu:', message);
