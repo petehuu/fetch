@@ -6,6 +6,17 @@ const port = process.env.PORT || 4000;
 
 app.use(cors());  // Käytä cors-middlewarea
 
+// Manuaalinen CORS-otsikoiden asettaminen (varmuuden vuoksi)
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+    next();
+});
+
 // Proxy-pyynnöt
 app.use('/api', createProxyMiddleware({
     target: 'http://localhost:3000',  // Express-server
@@ -18,6 +29,7 @@ app.use('/api', createProxyMiddleware({
     },
     onProxyRes: (proxyRes, req, res) => {
         console.log('Proxy-vastaus:', proxyRes.statusCode);
+        res.setHeader('Access-Control-Allow-Origin', '*');  // Salli pyynnöt mistä tahansa alkuperästä
     }
 }));
 
