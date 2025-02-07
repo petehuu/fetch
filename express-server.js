@@ -6,7 +6,7 @@ const http = require('http');
 const WebSocket = require('ws');
 
 const app = express();
-const port = 80; // Muutettu portti
+const port = 80; // Käytetään porttia 80
 
 // Käytä cors-middlewarea
 app.use(cors());
