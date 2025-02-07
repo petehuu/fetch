@@ -54,7 +54,7 @@ jobs:
         for i in {1..6}; do
           echo "Check $i/6 - Verifying server status..."
           echo "Sending curl request..."
-          response=$(curl -v -s -w "%{http_code}" -o response.txt https://localhost/status) || true
+          response=$(curl -k -v -s -w "%{http_code}" -o response.txt https://localhost/status) || true
           echo "Curl request completed."
           echo "Reading response..."
           status=$(cat response.txt | jq -r '.status' || echo "unknown")
