@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test</title>
+    <style>
+        .status-ok { color: green; }
+        .status-down { color: red; }
+    </style>
+    <script>
+        let wsServer;
+        const clients = [];
+
+        function startWebSocketServer() {
+            wsServer = new WebSocket.Server({ port: 4000 });
+
+            wsServer.on('connection', (ws) => {
+                console.log('WebSocket client connected');
+                clients.push(ws);
+
+                ws.on('message', (message) => {
+                    console.log('Received:', message);
+                    ws.send('Echo: ' + message);
+                });
+
+                ws.on('close', () => {
+                    console.log('WebSocket client disconnected');
+                    const index = clients.indexOf(ws);
+                    if (index !== -1) {
+                        clients.splice(index, 1);
+                    }
+                });
+
+                ws.on('error', (error) => {
+                    console.error('WebSocket error:', error);
+                });
+            });
+
+            console.log('WebSocket server started on ws://localhost:4000');
+        }
+
+        function stopWebSocketServer() {
+            wsServer.close(() => {
+                console.log('WebSocket server stopped');
+            });
+        }
+
+        window.onload = () => {
+            startWebSocketServer();
+
+            window.addEventListener('beforeunload', () => {
+                stopWebSocketServer();
+            });
+        };
+    </script>
+</head>
+<body>
+    <h1>WebSocket Test</h1>
+    <p>Open your browser console to see the WebSocket server logs.</p>
+</body>
+</html>
