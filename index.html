@@ -8,12 +8,12 @@
         .status-ok { color: green; }
         .status-down { color: red; }
     </style>
-    <!-- Sisällytä SockJS-kirjasto HTTPS-versiona -->
+    <!-- Sisällytä SockJS-kirjasto -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
     <script>
         function checkServerStatus() {
             try {
-                const sock = new SockJS('https://127.0.0.1:443/websocket'); // Käytetään IP-osoitetta ja porttia 443
+                const sock = new SockJS('http://localhost:3000/websocket'); // Käytetään porttia 3000
 
                 sock.onopen = () => {
                     console.log('SockJS-yhteys avattu');
