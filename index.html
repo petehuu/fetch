@@ -8,6 +8,7 @@
         .status-ok { color: green; }
         .status-down { color: red; }
     </style>
+    <!-- Sisällytä ulkoinen JavaScript-tiedosto käyttämällä WebSocket-yhteyttä -->
     <script>
         function checkServerStatus() {
             try {
@@ -41,15 +42,11 @@
                     console.log('WebSocket-yhteys suljettu:', event);
                     document.getElementById('server-status').textContent = 'Server is down';
                     document.getElementById('server-status').className = 'status-down';
-                    // Yritetään uudelleen 5 sekunnin kuluttua
-                    setTimeout(checkServerStatus, 5000);
                 };
             } catch (error) {
                 console.error('WebSocket-yhteyden muodostusvirhe:', error);
                 document.getElementById('server-status').textContent = 'Server is down';
                 document.getElementById('server-status').className = 'status-down';
-                // Yritetään uudelleen 5 sekunnin kuluttua
-                setTimeout(checkServerStatus, 5000);
             }
         }
 
