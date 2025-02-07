@@ -2,11 +2,11 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
-const https = require('https');
+const http = require('http');
 const SockJS = require('sockjs');
 
 const app = express();
-const port = 443; // Käytetään porttia 443 HTTPS:lle
+const port = 80; // Palataan porttiin 80 HTTP:lle
 
 // Käytä cors-middlewarea
 app.use(cors());
@@ -44,12 +44,7 @@ sockjs.on('connection', (conn) => {
     });
 });
 
-// Lataa SSL-sertifikaatti ja avain
-const privateKey = fs.readFileSync('server.key', 'utf8');
-const certificate = fs.readFileSync('server.cert', 'utf8');
-const credentials = { key: privateKey, cert: certificate };
-
-const server = https.createServer(credentials, app);
+const server = http.createServer(app);
 sockjs.installHandlers(server, { prefix: '/websocket' });
 
 // Lisää `/status` reitti
@@ -66,5 +61,5 @@ app.get('/status', (req, res) => {
 });
 
 server.listen(port, () => {
-    console.log(`Serveri käynnissä osoitteessa https://localhost:${port}`);
+    console.log(`Serveri käynnissä osoitteessa http://localhost:${port}`);
 });
