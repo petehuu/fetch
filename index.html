@@ -8,11 +8,11 @@
         .status-ok { color: green; }
         .status-down { color: red; }
     </style>
-    <!-- Käytetään WebSocket-yhteyttä -->
+    <!-- Sisällytä WebSocket-yhteys -->
     <script>
         function checkServerStatus() {
             try {
-                const ws = new WebSocket('wss://localhost:3000'); // Käytetään WebSocket-yhteyttä ja porttia 3000
+                const ws = new WebSocket('wss://localhost:3000'); // Käytetään WebSocket-yhteyttä HTTPS:llä
 
                 ws.onopen = () => {
                     console.log('WebSocket-yhteys avattu');
