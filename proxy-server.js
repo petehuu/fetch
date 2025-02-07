@@ -1,10 +1,14 @@
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const cors = require('cors');
+const path = require('path');
 const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(cors());  // Käytä cors-middlewarea
+
+// Palvele `server-status.js` tiedostoa
+app.use('/server-status.js', express.static(path.join(__dirname, 'server-status.js')));
 
 // Manuaalinen CORS-otsikoiden asettaminen (varmuuden vuoksi)
 app.use((req, res, next) => {
