@@ -9,6 +9,7 @@ ws.on('open', function open() {
 
 ws.on('message', function message(data) {
     console.log('Vastaanotettu:', data);
+    ws.close();  // Sulje WebSocket-yhteys viestin vastaanottamisen jälkeen
 });
 
 ws.on('error', function error(error) {
