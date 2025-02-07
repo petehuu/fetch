@@ -35,17 +35,9 @@ wss.on('connection', (ws) => {
             });
         }
     });
-});
 
-app.get('/status', (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    fs.readFile(path.join(__dirname, 'status.json'), 'utf8', (err, data) => {
-        if (err) {
-            console.error('Virhe luettaessa tiedostoa:', err);
-            res.status(500).send('Virhe luettaessa tiedostoa');
-        } else {
-            res.json(JSON.parse(data));
-        }
+    ws.on('error', (error) => {
+        console.error('WebSocket-virhe:', error);
     });
 });
 
