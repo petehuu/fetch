@@ -43,7 +43,7 @@ jobs:
     - name: Wait for server to start
       run: |
         echo "Waiting for server to start..."
-        sleep 10  # Increase wait time to ensure server starts
+        sleep 2  # Reduce wait time to 2 seconds
 
     - name: Run SockJS client test
       run: sudo node test-sockjs-client.js
@@ -54,7 +54,7 @@ jobs:
         for i in {1..6}; do
           echo "Check $i/6 - Verifying server status..."
           echo "Sending curl request..."
-          response=$(curl -v -s -w "%{http_code}" -o response.txt http://localhost:3000/status) || true
+          response=$(curl -k -v -s -w "%{http_code}" -o response.txt https://localhost:3000/status) || true
           echo "Curl request completed."
           echo "Reading response..."
           status=$(cat response.txt | jq -r '.status' || echo "unknown")
