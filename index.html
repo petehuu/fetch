@@ -8,38 +8,49 @@
         .status-ok { color: green; }
         .status-down { color: red; }
     </style>
-    <!-- Sisällytä ulkoinen JavaScript-tiedosto käyttämällä WebSocket-yhteyttä -->
     <script>
         function checkServerStatus() {
-            const ws = new WebSocket('ws://localhost:3000');
-            
-            ws.onopen = () => {
-                console.log('WebSocket-yhteys avattu');
-                ws.send('getStatus');
-            };
-            
-            ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                console.log("Vastaanotettu:", data);
-                document.getElementById('raw_result').innerText = JSON.stringify(data, null, 2);
-                if (data.status === "OK") {
-                    document.getElementById('server-status').textContent = 'Status OK';
-                    document.getElementById('server-status').className = 'status-ok';
-                } else {
+            try {
+                const ws = new WebSocket('ws://localhost:3000');
+
+                ws.onopen = () => {
+                    console.log('WebSocket-yhteys avattu');
+                    ws.send('getStatus');
+                };
+
+                ws.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    console.log("Vastaanotettu:", data);
+                    document.getElementById('raw_result').innerText = JSON.stringify(data, null, 2);
+                    if (data.status === "OK") {
+                        document.getElementById('server-status').textContent = 'Status OK';
+                        document.getElementById('server-status').className = 'status-ok';
+                    } else {
+                        document.getElementById('server-status').textContent = 'Server is down';
+                        document.getElementById('server-status').className = 'status-down';
+                    }
+                };
+
+                ws.onerror = (error) => {
+                    console.error('WebSocket-virhe:', error);
                     document.getElementById('server-status').textContent = 'Server is down';
                     document.getElementById('server-status').className = 'status-down';
-                }
-            };
+                };
 
-            ws.onerror = (error) => {
-                console.error('WebSocket-virhe:', error);
+                ws.onclose = (event) => {
+                    console.log('WebSocket-yhteys suljettu:', event);
+                    document.getElementById('server-status').textContent = 'Server is down';
+                    document.getElementById('server-status').className = 'status-down';
+                    // Yritetään uudelleen 5 sekunnin kuluttua
+                    setTimeout(checkServerStatus, 5000);
+                };
+            } catch (error) {
+                console.error('WebSocket-yhteyden muodostusvirhe:', error);
                 document.getElementById('server-status').textContent = 'Server is down';
                 document.getElementById('server-status').className = 'status-down';
-            };
-
-            ws.onclose = (event) => {
-                console.log('WebSocket-yhteys suljettu:', event);
-            };
+                // Yritetään uudelleen 5 sekunnin kuluttua
+                setTimeout(checkServerStatus, 5000);
+            }
         }
 
         window.onload = checkServerStatus;
@@ -49,7 +60,7 @@
     <h1>Server Status</h1>
     <p id="server-status">Checking...</p>
     <br>
-    <pre id="result">Loading....</pre>
+    <pre id="result">Loading...</pre>
     <br>
     <pre id="raw_result"> </pre>
 </body>
