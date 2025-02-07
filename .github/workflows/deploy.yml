@@ -38,13 +38,16 @@ jobs:
     - name: Start server
       run: |
         echo "Starting server..."
-        npm start &
+        nohup npm start &
         echo "Server started."
 
     - name: Wait for server to start
       run: |
         echo "Waiting for server to start..."
-        sleep 5  # Increase wait time to ensure server starts
+        sleep 10  # Increase wait time to ensure server starts
+
+    - name: Run WebSocket client test
+      run: node test-websocket-client.js
 
     - name: Verify server status periodically
       run: |
