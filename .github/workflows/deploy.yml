@@ -46,8 +46,8 @@ jobs:
         echo "Waiting for server to start..."
         sleep 10  # Increase wait time to ensure server starts
 
-    - name: Run WebSocket client test
-      run: sudo node test-websocket-client.js
+    - name: Run SockJS client test
+      run: sudo node test-sockjs-client.js
 
     - name: Verify server status periodically
       run: |
