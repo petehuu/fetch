@@ -12,7 +12,7 @@
     <script>
         function checkServerStatus() {
             try {
-                const ws = new WebSocket('ws://localhost');
+                const ws = new WebSocket('ws://localhost:80');
 
                 ws.onopen = () => {
                     console.log('WebSocket-yhteys avattu');
