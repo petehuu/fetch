@@ -30,11 +30,15 @@
                     document.getElementById('server-status').className = 'status-down';
                 }
             };
-            
+
             ws.onerror = (error) => {
                 console.error('WebSocket-virhe:', error);
                 document.getElementById('server-status').textContent = 'Server is down';
                 document.getElementById('server-status').className = 'status-down';
+            };
+
+            ws.onclose = (event) => {
+                console.log('WebSocket-yhteys suljettu:', event);
             };
         }
 
@@ -49,4 +53,4 @@
     <br>
     <pre id="raw_result"> </pre>
 </body>
-</
+</html>
