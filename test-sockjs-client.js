@@ -1,6 +1,6 @@
 const SockJS = require('sockjs-client');
 
-const sock = new SockJS('http://localhost/websocket');
+const sock = new SockJS('https://localhost/websocket'); // Käytetään HTTPS:ää
 
 sock.onopen = function() {
     console.log('SockJS-yhteys avattu');
