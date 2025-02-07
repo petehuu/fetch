@@ -62,9 +62,8 @@ jobs:
           echo "Response Body: $(cat response.txt)"
           if [ "$status" == "OK" ]; then
             echo "Server status OK. Remaining in loop."
-          else {
+          else
             echo "Server status not OK. Attempt $i failed."
-            break
           fi
           echo "Waiting for 10 seconds before next attempt..."
           sleep 10
