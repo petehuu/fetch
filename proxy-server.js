@@ -4,36 +4,32 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 4000;
 
-app.use(cors());  // Use the cors middleware
+app.use(cors());  // Käytä cors-middlewarea
 
-// Middleware to set CORS headers manually
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
-    next();
-});
-
-// Proxy endpoint to forward requests to your Express server
 app.use('/api', createProxyMiddleware({
-    target: 'http://localhost:3000',  // Your Express server
+    target: 'http://localhost:3000',  // Express-serverisi
     changeOrigin: true,
     pathRewrite: {
-        '^/api': ''  // Remove "/api" from the proxied request path
+        '^/api': ''  // Poista "/api" proxytetun pyynnön polusta
     },
     onProxyReq: (proxyReq, req, res) => {
-        // Log the proxy request
-        console.log('Proxy request:', req.method, req.url);
+        console.log('Proxy-pyyntö:', req.method, req.url);
     },
     onProxyRes: (proxyRes, req, res) => {
-        // Log the proxy response
-        console.log('Proxy response:', proxyRes.statusCode);
+        console.log('Proxy-vastaus:', proxyRes.statusCode);
+        // Aseta CORS-otsikot proxytetulle vastaukselle
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     }
 }));
 
+// Virheiden käsittely
+app.use((err, req, res, next) => {
+    console.error('Käsittelemätön virhe:', err);
+    res.status(500).send('Odottamaton virhe tapahtui');
+});
+
 app.listen(port, () => {
-    console.log(`Proxy server running at http://localhost:${port}`);
+    console.log(`Proxy-serveri käynnissä osoitteessa http://localhost:${port}`);
 });
