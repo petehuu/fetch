@@ -7,7 +7,7 @@ const port = process.env.PORT || 4000;
 
 app.use(cors());  // Käytä cors-middlewarea
 
-// Lokitiedot pyynnöistä
+// Lokitiedot kaikista pyynnöistä
 app.use((req, res, next) => {
     console.log(`Pyynnön URL: ${req.url}, Metodi: ${req.method}`);
     next();
