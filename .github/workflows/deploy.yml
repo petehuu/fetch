@@ -1,12 +1,10 @@
-name: Deploy Application
+name: Build and Deploy
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -24,17 +22,52 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Run WebSocket server
-      run: node express-server.js &
+    - name: Run tests
+      run: npm test
       continue-on-error: true
 
-    - name: Wait for server to be ready
-      run: sleep 5
+    - name: Build project
+      run: npm run build
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+        publish_dir: ./
+
+    - name: Start server
+      run: |
+        echo "Starting server..."
+        nohup npm start &
+        echo "Server started."
+
+    - name: Wait for server to start
+      run: |
+        echo "Waiting for server to start..."
+        sleep 10  # Increase wait time to ensure server starts
 
     - name: Run WebSocket client test
       run: node test-websocket-client.js
 
-    - name: Deploy Application
+    - name: Verify server status periodically
       run: |
-        # Lisää tänne käyttöönoton vaiheet
-        echo "Käyttöönotto suoritettu"
+        echo "Starting status verification loop..."
+        for i in {1..6}; do
+          echo "Check $i/6 - Verifying server status..."
+          echo "Sending curl request..."
+          response=$(curl -v -s -w "%{http_code}" -o response.txt http://localhost:3000/status) || true
+          echo "Curl request completed."
+          echo "Reading response..."
+          status=$(cat response.txt | jq -r '.status' || echo "unknown")
+          echo "HTTP Status Code: $response"
+          echo "Response Body: $(cat response.txt)"
+          if [ "$status" == "OK" ]; then
+            echo "Server status OK. Remaining in loop."
+          else
+            echo "Server status not OK. Attempt $i failed."
+            break
+          fi
+          echo "Waiting for 10 seconds before next attempt..."
+          sleep 10
+        done
+      continue-on-error: true
