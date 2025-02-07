@@ -8,50 +8,6 @@
         .status-ok { color: green; }
         .status-down { color: red; }
     </style>
-    <!-- Sisällytä WebSocket-yhteys -->
-    <script>
-        function checkServerStatus() {
-            try {
-                const ws = new WebSocket('wss://localhost:3000'); // Käytetään WebSocket-yhteyttä HTTPS:llä
-
-                ws.onopen = () => {
-                    console.log('WebSocket-yhteys avattu');
-                    ws.send('getStatus');
-                };
-
-                ws.onmessage = (event) => {
-                    const data = JSON.parse(event.data);
-                    console.log("Vastaanotettu:", data);
-                    document.getElementById('raw_result').innerText = JSON.stringify(data, null, 2);
-                    if (data.status === "OK") {
-                        document.getElementById('server-status').textContent = 'Status OK';
-                        document.getElementById('server-status').className = 'status-ok';
-                    } else {
-                        document.getElementById('server-status').textContent = 'Server is down';
-                        document.getElementById('server-status').className = 'status-down';
-                    }
-                };
-
-                ws.onerror = (error) => {
-                    console.error('WebSocket-virhe:', error);
-                    document.getElementById('server-status').textContent = 'Server is down';
-                    document.getElementById('server-status').className = 'status-down';
-                };
-
-                ws.onclose = (event) => {
-                    console.log('WebSocket-yhteys suljettu:', event);
-                    document.getElementById('server-status').textContent = 'Server is down';
-                    document.getElementById('server-status').className = 'status-down';
-                };
-            } catch (error) {
-                console.error('WebSocket-yhteyden muodostusvirhe:', error);
-                document.getElementById('server-status').textContent = 'Server is down';
-                document.getElementById('server-status').className = 'status-down';
-            }
-        }
-
-        window.onload = checkServerStatus;
-    </script>
 </head>
 <body>
     <h1>Server Status</h1>
@@ -60,5 +16,35 @@
     <pre id="result">Loading...</pre>
     <br>
     <pre id="raw_result"> </pre>
+    <script>
+        async function checkServerStatus() {
+            try {
+                const furl = 'http://localhost:4000/api/status';  // Proxy URL
+                const response = await fetch(furl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const text = await response.text();
+                console.log("Raw response:", text);
+                document.getElementById('raw_result').innerText = text; // Display the raw response text
+                const data = JSON.parse(text);
+                if (data.status === "OK") {
+                    document.getElementById('server-status').textContent = 'Status OK';
+                    document.getElementById('server-status').className = 'status-ok';
+                } else {
+                    document.getElementById('server-status').textContent = 'Server is down';
+                    document.getElementById('server-status').className = 'status-down';
+                }
+            } catch (error) {
+                document.getElementById('server-status').textContent = 'Server is down';
+                document.getElementById('server-status').className = 'status-down';
+                console.error('Fetch error:', error);
+            }
+        }
+
+        window.onload = checkServerStatus;
+    </script>
 </body>
 </html>
