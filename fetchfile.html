@@ -3,24 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fetch Text File</title>
+    <title>Edit and Save Text File</title>
 </head>
 <body>
-    <h1>Fetch Text File Content</h1>
-    <pre id="fileContent"></pre>
+    <h1>Edit and Save Text File</h1>
+    <textarea id="fileContent" rows="10" cols="50">Loading content...</textarea>
+    <br>
+    <button onclick="saveTextFile()">Save File</button>
 
     <script>
-        function fetchTextFile() {
-            fetch('./textfile.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('fileContent').textContent = data;
-                })
-                .catch(error => console.error('Error fetching the file:', error));
+        async function fetchTextFile(url) {
+            try {
+                const response = await fetch(url);
+                const data = await response.text();
+                return data;
+            } catch (error) {
+                console.error('Error fetching the file:', error);
+                return null;
+            }
         }
 
-        // Call the function to fetch the file when the page loads
-        window.onload = fetchTextFile;
+        async function loadFileContent() {
+            const url = './textfile.html'; // Use relative path to fetch the file from the same directory
+            const content = await fetchTextFile(url);
+            if (content !== null) {
+                document.getElementById('fileContent').textContent = content;
+            } else {
+                document.getElementById('fileContent').textContent = 'Error fetching the file';
+            }
+        }
+
+        async function saveTextFile() {
+            const content = document.getElementById('fileContent').value;
+            const response = await fetch('/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: content })
+            });
+            if (response.ok) {
+                alert('File saved successfully!');
+            } else {
+                alert('Error saving the file');
+            }
+        }
+
+        // Call the function to load the file content when the page loads
+        window.onload = loadFileContent;
     </script>
 </body>
 </html>
