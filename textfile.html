@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download JSON File</title>
+</head>
+<body>
+    <h1>Download JSON File from String</h1>
+
+    <script>
+        // JSON data as a string
+        const json_string = JSON.stringify({
+            name: "John Doe",
+            age: 30,
+            city: "New York"
+        });
+
+        // Create an anchor element and set its attributes to enable downloading the file
+        var link = document.createElement('a');
+        link.download = 'data.json';
+        var blob = new Blob([json_string], {type: 'application/json'});
+        link.href = window.URL.createObjectURL(blob);
+
+        // Programmatically click the anchor element to trigger the download
+        link.click();
+
+        // Clean up the URL object after the download
+        window.URL.revokeObjectURL(link.href);
+    </script>
+</body>
+</html>
