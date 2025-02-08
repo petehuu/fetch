@@ -7,18 +7,20 @@
 </head>
 <body>
     <h1>Fetch Text File Content</h1>
-    <button onclick="fetchTextFile()">Fetch File</button>
     <pre id="fileContent"></pre>
 
     <script>
         function fetchTextFile() {
-            fetch('https://petehuu.github.io/fetch/textfile.html')
+            fetch('https://username.github.io/repository/example.txt')
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('fileContent').textContent = data;
                 })
                 .catch(error => console.error('Error fetching the file:', error));
         }
+
+        // Call the function to fetch the file when the page loads
+        window.onload = fetchTextFile;
     </script>
 </body>
 </html>
