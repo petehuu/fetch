@@ -11,7 +11,7 @@
 
     <script>
         function fetchTextFile() {
-            fetch('/textfile.html')
+            fetch('./textfile.html')
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('fileContent').textContent = data;
